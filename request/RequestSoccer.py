@@ -39,7 +39,7 @@ class RequestSoccer:
     run()
         Orquestra e identifica se API precisa de season ou não, e roda
         a run_withoutloop ou run_with_loop.
-    run_withoutlop()
+    run_withoutloop()
         Caso não seja necessária a season o método a ser escolhido será esse
         usa o request_data e depois o save_json.
     run_with_loop()
