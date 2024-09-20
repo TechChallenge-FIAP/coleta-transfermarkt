@@ -39,7 +39,7 @@ class RequestSoccer:
     run()
         Orquestra e identifica se API precisa de season ou não, e roda
         a run_withoutloop ou run_with_loop.
-    run_withoutlop()
+    run_withoutloop()
         Caso não seja necessária a season o método a ser escolhido será esse
         usa o request_data e depois o save_json.
     run_with_loop()
@@ -68,7 +68,7 @@ class RequestSoccer:
             else:
                 endpoint = model.endpoint.format(id=id)
             print(endpoint)
-            time.sleep(10)
+            time.sleep(4)
             response = requests.get(
                 f"https://transfermarkt-api.fly.dev/{endpoint}",
             )
@@ -101,7 +101,7 @@ class RequestSoccer:
 
         self.save_json(list_of_tables)
 
-    def run_withoutlop(self, model: SoccerInfo) -> None:
+    def run_withoutloop(self, model: SoccerInfo) -> None:
         table = self.request_data(model)
         self.save_json(table)
 
@@ -111,5 +111,5 @@ class RequestSoccer:
             self.run_with_loop(model)
             return "Loaded with loop"
 
-        self.run_withoutlop(model)
+        self.run_withoutloop(model)
         return "Loaded without loop"
