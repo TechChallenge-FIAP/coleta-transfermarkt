@@ -1,0 +1,4 @@
+.vscode*
+amostra*
+venv*
+*__pycache__*
