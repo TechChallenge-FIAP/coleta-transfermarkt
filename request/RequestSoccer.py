@@ -88,7 +88,9 @@ class RequestSoccer:
         json_resp = [model.model_dump(mode="json") for model in table]
         data = json.dumps(json_resp, ensure_ascii=False)
         with open(
-            f"./amostra/{self.id['identifier']}.json", "w", encoding="utf-8"
+            f"./amostra/landing/{self.id['identifier']}/{self.id['identifier']}.json",
+            "w",
+            encoding="utf-8",
         ) as write_file:
             write_file.write(data)
 
