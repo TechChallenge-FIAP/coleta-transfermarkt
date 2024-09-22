@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -17,7 +17,7 @@ class LeagueInfo(BaseModel):
     name: str
     countryID: str
     countryName: str
-    tiers: str
+    tier: str
 
 
 class ClubsProfile(BaseModel):
@@ -33,16 +33,17 @@ class ClubsProfile(BaseModel):
     fax: str
     website: str
     foundedOn: str
-    members: str
-    membersDate: str
-    otherSports: List[str]
+    members: Optional[str] = None
+    membersDate: Optional[str] = None
+    otherSports: Optional[List[str]] = None
     colors: List[str]
     stadiumName: str
     stadiumSeats: str
     currentTransferRecord: str
-    curentMarketValue: str
+    curentMarketValue: Optional[str] = None
     squad: SquadInfo
     league: LeagueInfo
+    historicalCrests: Optional[List[str]] = None
     updatedAt: str
 
 
