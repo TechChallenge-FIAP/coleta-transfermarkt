@@ -1,12 +1,14 @@
 from request.ClubsProfile import ClubsProfile
 from request.CompetitionClubs import CompetitionClubs
 from request.PlayersMarketValue import PlayersMarketValue
+from request.PlayersTransfers import PlayersTransfers
 
 
 def lambda_handler(event=None, context=None):
     CompetitionClubs().run()
     ClubsProfile().run()
     PlayersMarketValue().run()
+    PlayersTransfers().run()
 
 
 if __name__ == "__main__":
