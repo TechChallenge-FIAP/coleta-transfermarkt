@@ -2,6 +2,7 @@ import json
 import time
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional
+from pathlib import Path
 
 import requests
 from pydantic import BaseModel
@@ -53,7 +54,7 @@ class RequestSoccer:
     """
 
     id: Dict[str, str]
-    season: Optional[List[str]]
+    season: Optional[List[str]] = None
     endpoint: Dict[str, Optional[str]] = field(default_factory=dict)
 
     def request_data(self, model: SoccerInfo) -> List[BaseModel]:
@@ -87,6 +88,9 @@ class RequestSoccer:
     def save_json(self, table: List[BaseModel]) -> None:
         json_resp = [model.model_dump(mode="json") for model in table]
         data = json.dumps(json_resp, ensure_ascii=False)
+        Path(f"./amostra/landing/{self.id['identifier']}/").mkdir(
+            parents=True, exist_ok=True
+        )
         with open(
             f"./amostra/landing/{self.id['identifier']}/{self.id['identifier']}.json",
             "w",
