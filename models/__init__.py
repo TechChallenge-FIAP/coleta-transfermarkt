@@ -4,6 +4,7 @@ from models.clubs_players import clubs_players
 from models.clubs_profile import clubs_profile
 from models.competitions_clubs import competitionsClubs
 from models.players_market_value import players_market_value
+from models.players_transfers import players_transfers
 from models.util import SoccerInfo
 
 PYDANTIC_MODELS: List[SoccerInfo] = [
@@ -11,6 +12,8 @@ PYDANTIC_MODELS: List[SoccerInfo] = [
     clubs_profile,
     players_market_value,
     clubs_players,
+    players_transfers,
+
 ]
 
 ID = {model.id: model for model in PYDANTIC_MODELS}
