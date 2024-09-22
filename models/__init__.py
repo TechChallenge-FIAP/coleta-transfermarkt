@@ -1,9 +1,10 @@
 from typing import Dict, List
 
+from models.clubs_profile import clubs_profile
 from models.competitions_clubs import competitionsClubs
 from models.util import SoccerInfo
 
-PYDANTIC_MODELS: List[SoccerInfo] = [competitionsClubs]
+PYDANTIC_MODELS: List[SoccerInfo] = [competitionsClubs, clubs_profile]
 
 ID = {model.id: model for model in PYDANTIC_MODELS}
 
