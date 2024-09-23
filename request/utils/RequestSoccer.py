@@ -1,11 +1,12 @@
+import concurrent.futures
 import json
-import time
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
 from pathlib import Path
+from typing import Dict, List, Optional
 
 import requests
 from pydantic import BaseModel
+from tqdm import tqdm
 
 from models import SoccerInfo, identify_class
 
@@ -33,10 +34,11 @@ class RequestSoccer:
 
     Methods
     ----------
-    request_data()
-        Realiza as requisições necessárias conforme a quantidade de ids
-        e coleta todos os dados do endpoint fornecido além de validar
-        em conjunto com o pydantic o formato dos dados.
+    request_multhread()
+        Verifica a quantidade de endpoints e faz uma coleta em paralelo
+        da função request_parallel utilizando 6 threads da sua CPU.
+    request_parallel()
+        Realiza as requisições necessárias conforme os endpoints recebidos.
     run()
         Orquestra e identifica se API precisa de season ou não, e roda
         a run_withoutloop ou run_with_loop.
@@ -57,28 +59,36 @@ class RequestSoccer:
     season: Optional[List[str]] = None
     endpoint: Dict[str, Optional[str]] = field(default_factory=dict)
 
-    def request_data(self, model: SoccerInfo) -> List[BaseModel]:
-        list_of_response = []
-        for id in self.id["id"]:
-            self.endpoint["id"] = id
+    def request_parallel(self, endpoint: str) -> Dict:
+        response = requests.get(f"https://transfermarkt-api.fly.dev/{endpoint}")
+
+        if response.status_code != 200:
+            response.raise_for_status()
+
+        table = json.loads(response.text)
+        return table
+
+    def request_multhread(self, model: SoccerInfo) -> List[BaseModel]:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=6) as executor:
             if isinstance(self.season, list):
-                endpoint = model.endpoint.format(
-                    id=id,
-                    season=self.endpoint["season"],
-                )
+                endpoints = [
+                    model.endpoint.format(
+                        id=id,
+                        season=self.endpoint["season"],
+                    )
+                    for id in self.id["id"]
+                ]
             else:
-                endpoint = model.endpoint.format(id=id)
-            print(endpoint)
-            time.sleep(4)
-            response = requests.get(
-                f"https://transfermarkt-api.fly.dev/{endpoint}",
-            )
-
-            if response.status_code != 200:
-                response.raise_for_status()
-
-            table = json.loads(response.text)
-            list_of_response.append(table)
+                endpoints = [model.endpoint.format(id=id) for id in self.id["id"]]
+            list_of_response = []
+            future_to_url = {
+                executor.submit(self.request_parallel, endpoint): endpoint
+                for endpoint in endpoints
+            }
+            for future in tqdm(concurrent.futures.as_completed(future_to_url)):
+                data = future.result()
+                list_of_response.append(data)
+            executor.shutdown(wait=False)
         return [model.schema(**table) for table in list_of_response]
 
     # TODO Criar função para salvar arquivo no S3
@@ -102,13 +112,13 @@ class RequestSoccer:
         list_of_tables = []
         for season in self.season or []:
             self.endpoint["season"] = season
-            table = self.request_data(model)
+            table = self.request_multhread(model)
             list_of_tables.extend(table)
 
         self.save_json(list_of_tables)
 
     def run_withoutloop(self, model: SoccerInfo) -> None:
-        table = self.request_data(model)
+        table = self.request_multhread(model)
         self.save_json(table)
 
     def run(self) -> str:
