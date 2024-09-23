@@ -1,5 +1,5 @@
-from typing import List
 from dataclasses import dataclass
+from typing import List
 
 from request.utils.RequestSoccer import RequestSoccer
 from request.utils.utils import read_json

@@ -13,7 +13,6 @@ PYDANTIC_MODELS: List[SoccerInfo] = [
     players_market_value,
     clubs_players,
     players_transfers,
-
 ]
 
 ID = {model.id: model for model in PYDANTIC_MODELS}

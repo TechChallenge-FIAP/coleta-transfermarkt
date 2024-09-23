@@ -6,45 +6,45 @@ from models.util import SoccerInfo
 
 
 class SquadInfo(BaseModel):
-    size: str
-    averageAge: str
-    foreigners: str
-    nationalTeamPlayers: str
+    size: Optional[str] = None
+    averageAge: Optional[str] = None
+    foreigners: Optional[str] = None
+    nationalTeamPlayers: Optional[str] = None
 
 
 class LeagueInfo(BaseModel):
-    id: str
-    name: str
-    countryID: str
-    countryName: str
-    tier: str
+    id: Optional[str] = None
+    name: Optional[str] = None
+    countryID: Optional[str] = None
+    countryName: Optional[str] = None
+    tier: Optional[str] = None
 
 
 class ClubsProfile(BaseModel):
     id: str
-    url: str
-    name: str
-    officialName: str
-    image: str
-    addressLine1: str
-    addressLine2: str
-    addressLine3: str
-    tel: str
-    fax: str
-    website: str
-    foundedOn: str
+    url: Optional[str] = None
+    name: Optional[str] = None
+    officialName: Optional[str] = None
+    image: Optional[str] = None
+    addressLine1: Optional[str] = None
+    addressLine2: Optional[str] = None
+    addressLine3: Optional[str] = None
+    tel: Optional[str] = None
+    fax: Optional[str] = None
+    website: Optional[str] = None
+    foundedOn: Optional[str] = None
     members: Optional[str] = None
     membersDate: Optional[str] = None
     otherSports: Optional[List[str]] = None
-    colors: List[str]
-    stadiumName: str
-    stadiumSeats: str
-    currentTransferRecord: str
+    colors: Optional[List[str]] = None
+    stadiumName: Optional[str] = None
+    stadiumSeats: Optional[str] = None
+    currentTransferRecord: Optional[str] = None
     curentMarketValue: Optional[str] = None
-    squad: SquadInfo
-    league: LeagueInfo
+    squad: Optional[SquadInfo] = None
+    league: Optional[LeagueInfo] = None
     historicalCrests: Optional[List[str]] = None
-    updatedAt: str
+    updatedAt: Optional[str] = None
 
 
 clubs_profile = SoccerInfo(

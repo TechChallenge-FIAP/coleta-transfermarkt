@@ -8,8 +8,8 @@ from request.PlayersTransfers import PlayersTransfers
 def lambda_handler(event=None, context=None):
     CompetitionClubs().run()
     ClubsProfile().run()
-    PlayersMarketValue().run()
     ClubsPlayers().run()
+    PlayersMarketValue().run()
     PlayersTransfers().run()
 
 
