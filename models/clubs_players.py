@@ -7,14 +7,14 @@ from models.util import SoccerInfo
 
 class PlayerInfo(BaseModel):
     id: str
-    name: str
-    position: str
-    dateOfBirth: str
-    age: str
-    nationality: List[str]
+    name: Optional[str] = None
+    position: Optional[str] = None
+    dateOfBirth: Optional[str] = None
+    age: Optional[str] = None
+    nationality: Optional[List[str]] = None
     height: Optional[str] = None
     foot: Optional[str] = None
-    joinedOn: str
+    joinedOn: Optional[str] = None
     joined: Optional[str] = None
     signedFrom: Optional[str] = None
     contract: Optional[str] = None

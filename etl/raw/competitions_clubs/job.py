@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from raw.competitions_clubs.business_rules.business_rules import BusinessRules
+from etl.raw.competitions_clubs.business_rules.business_rules import BusinessRules
 
 
 @dataclass
