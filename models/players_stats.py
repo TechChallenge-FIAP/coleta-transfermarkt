@@ -17,14 +17,14 @@ class StatsInfo(BaseModel):
     minutesPlayed: Optional[str] = None
 
 
-class PlayerStats(BaseModel):
+class PlayersStats(BaseModel):
     id: str
     stats: List[StatsInfo]
     updatedAt: str
 
 
-player_stats = SoccerInfo(
-    id="PlayerStats",
-    schema=PlayerStats,
+players_stats = SoccerInfo(
+    id="PlayersStats",
+    schema=PlayersStats,
     endpoint="players/{id}/stats",
 )
