@@ -1,3 +1,5 @@
+import logging
+
 from etl.raw.clubs_profile.job import ClubsProfileJob
 from request.ClubsPlayers import ClubsPlayers
 from request.ClubsProfile import ClubsProfile
@@ -14,12 +16,27 @@ def lambda_handler(event=None, context=None):
 
 
 def request():
+    logging.info("Requesting data")
+
+    logging.info("Competition Clubs")
     CompetitionClubs().run()
+
+    logging.info("Clubs Profile")
     ClubsProfile().run()
+
+    logging.info("Clubs Players")
     ClubsPlayers().run()
+
+    logging.info("Players Market Value")
     PlayersMarketValue().run()
+
+    logging.info("Players Transfers")
     PlayersTransfers().run()
+
+    logging.info("Players Stats")
     PlayersStats().run()
+
+    logging.info("Players Injuries")
     PlayersInjuries().run()
 
 
