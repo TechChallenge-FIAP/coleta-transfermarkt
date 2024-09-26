@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 
-from etl.raw.clubs_profile.business_rules.business_rules import BusinessRules
+from etl.utils.utils import DefaultUtils
 
 
 @dataclass
-class ClubsProfileJob(BusinessRules):
+class ClubsProfileJob(DefaultUtils):
     def main(self):
         df_clubs_profile = self.read_raw("amostra/landing/ClubsProfile/")
 

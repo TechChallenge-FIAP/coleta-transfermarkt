@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional
 
+import boto3
 import requests
 from pydantic import BaseModel
 from tqdm import tqdm
@@ -58,6 +59,7 @@ class RequestSoccer:
     id: Dict[str, str]
     season: Optional[List[str]] = None
     endpoint: Dict[str, Optional[str]] = field(default_factory=dict)
+    page_number: Optional[int] = None
 
     def request_parallel(self, endpoint: str) -> Dict:
         response = requests.get(f"https://transfermarkt-api.fly.dev/{endpoint}")
@@ -78,6 +80,14 @@ class RequestSoccer:
                     )
                     for id in self.id["id"]
                 ]
+            elif isinstance(self.page_number, int):
+                endpoints = [
+                    model.endpoint.format(
+                        id=id,
+                        page_number=self.page_number,
+                    )
+                    for id in self.id["id"]
+                ]
             else:
                 endpoints = [model.endpoint.format(id=id) for id in self.id["id"]]
             list_of_response = []
@@ -91,9 +101,17 @@ class RequestSoccer:
             executor.shutdown(wait=False)
         return [model.schema(**table) for table in list_of_response]
 
-    # TODO Criar função para salvar arquivo no S3
-    def save_s3(self, table):
-        pass
+    def save_s3(self, bucket: str, table: dict):
+        json_resp = [model.model_dump(mode="json") for model in table]
+        s3 = boto3.resource("s3")
+        s3.Bucket(bucket).put_object(
+            Key=(
+                f"{self.id['identifier']}/"
+                "{self.page_number if isinstance(self.page_number, int) else ''}"
+                "_{self.id['identifier']}.json"
+            ),
+            Body=json.dumps(json_resp, ensure_ascii=False),
+        )
 
     def save_json(self, table: List[BaseModel]) -> None:
         json_resp = [model.model_dump(mode="json") for model in table]
@@ -115,17 +133,22 @@ class RequestSoccer:
             table = self.request_multhread(model)
             list_of_tables.extend(table)
 
-        self.save_json(list_of_tables)
+        self.save_s3(bucket="tech-challenge-3-landing-zone", table=list_of_tables)
 
-    def run_withoutloop(self, model: SoccerInfo) -> None:
+    def run_withoutloop(self, model: SoccerInfo) -> int:
         table = self.request_multhread(model)
-        self.save_json(table)
+        last_page: int = table.get("lastPageNumber", None)
 
-    def run(self) -> str:
+        self.save_s3(bucket="tech-challenge-3-landing-zone", table=table)
+        if last_page:
+            return last_page
+        else:
+            return -1
+
+    def run(self) -> str | int:
         model = identify_class(self.id)
         if isinstance(self.season, list):
             self.run_with_loop(model)
             return "Loaded with loop"
 
-        self.run_withoutloop(model)
-        return "Loaded without loop"
+        return self.run_withoutloop(model)
