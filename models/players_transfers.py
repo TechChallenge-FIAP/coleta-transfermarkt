@@ -14,9 +14,9 @@ class Transfer(BaseModel):
     id: str
     clubFrom: Optional[ClubTransfer] = Field(None, alias="from")
     clubTo: Optional[ClubTransfer] = Field(None, alias="to")
-    date: str
-    upcoming: bool
-    season: str
+    date: Optional[str] = None
+    upcoming: Optional[bool] = None
+    season: Optional[str] = None
     fee: Optional[str] = None
 
 
