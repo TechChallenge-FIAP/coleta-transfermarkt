@@ -24,6 +24,7 @@ class PlayerInfo(BaseModel):
 
 class ClubsPlayers(BaseModel):
     id: str
+    seasonID: Optional[str]
     players: List[PlayerInfo]
     updatedAt: str
 
@@ -31,5 +32,5 @@ class ClubsPlayers(BaseModel):
 clubs_players = SoccerInfo(
     id="ClubsPlayers",
     schema=ClubsPlayers,
-    endpoint="clubs/{id}/players",
+    endpoint="clubs/{id}/players?season_id={season}",
 )
