@@ -29,5 +29,6 @@ class ClubsPlayers:
     def run(self):
         self.get_club_ids()
         id = self.payload.get("id")
-        main = RequestSoccer(id=id)
+        season = self.payload.get("season")
+        main = RequestSoccer(id=id, season=season)
         main.run()
