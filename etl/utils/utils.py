@@ -9,10 +9,10 @@ class DefaultUtils:
     conf = SparkConf()
     conf.setAll(
         [
-            ("spark.jars.packages", "org.apache.hadoop:hadoop-aws:3.2.0"),
+            ("spark.jars.packages", "org.apache.hadoop:hadoop-aws:3.3.4"),
             (
-                "spark.hadoop.fs.s3a.aws.credentials.provider",
-                "com.amazonaws.auth.profile.ProfileCredentialsProvider",
+                "fs.s3a.aws.credentials.provider",
+                "com.amazonaws.auth.DefaultAWSCredentialsProviderChain",
             ),
         ]
     )

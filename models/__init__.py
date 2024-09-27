@@ -1,11 +1,11 @@
 from typing import Dict, List
 
-from models.players_injuries import players_injuries
-from models.players_stats import players_stats
 from models.clubs_players import clubs_players
 from models.clubs_profile import clubs_profile
 from models.competitions_clubs import competitionsClubs
+from models.players_injuries import players_injuries
 from models.players_market_value import players_market_value
+from models.players_stats import players_stats
 from models.players_transfers import players_transfers
 from models.util import SoccerInfo
 
@@ -17,7 +17,6 @@ PYDANTIC_MODELS: List[SoccerInfo] = [
     players_transfers,
     players_stats,
     players_injuries,
-
 ]
 
 ID = {model.id: model for model in PYDANTIC_MODELS}
