@@ -131,19 +131,29 @@ class RequestSoccer:
                 ]
 
         else:
-            for id in self.id["id"]:
-                response = self.request_multhread(
-                    [model.endpoint.format(id=id, page_number=self.start_page)]
+            endpoints = [
+                model.endpoint.format(
+                    id=id,
+                    page_number=self.start_page,
                 )
-                last_page_number = response[0].get("lastPageNumber", None)
-                for i in range(self.start_page, last_page_number + 1):
-                    endpoints += model.endpoint.format(
-                        id=id,
-                        page_number=i,
-                    )
+                for id in self.id["id"]
+            ]
+
+            response_list = self.request_multhread(endpoints)
+            for res in response_list:
+                list_of_tables.append(model.schema(**res))
+                last_page_number = res.get("lastPageNumber", 0)
+                if res.get("lastPageNumber") > self.start_page:
+                    endpoints = [
+                        model.endpoint.format(
+                            id=res.get("id"),
+                            page_number=i,
+                        )
+                        for i in range(self.start_page + 1, last_page_number + 1)
+                    ]
 
         response_list = self.request_multhread(endpoints)
-        list_of_tables += [model.schema(**table) for table in response_list]
+        list_of_tables.extend([model.schema(**table) for table in response_list])
 
         self.save_s3(bucket="tech-challenge-3-landing-zone", table=list_of_tables)
 

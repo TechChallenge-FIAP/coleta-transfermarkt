@@ -6,10 +6,10 @@ from models.util import SoccerInfo
 
 
 class StatsInfo(BaseModel):
-    competitionID: str
-    clubID: str
-    seasonID: str
-    competitionName: str
+    competitionID: Optional[str] = None
+    clubID: Optional[str] = None
+    seasonID: Optional[str] = None
+    competitionName: Optional[str] = None
     appearances: Optional[str] = None
     goals: Optional[str] = None
     assists: Optional[str] = None
@@ -19,7 +19,7 @@ class StatsInfo(BaseModel):
 
 class PlayersStats(BaseModel):
     id: str
-    stats: List[StatsInfo]
+    stats: Optional[List[StatsInfo]] = None
     updatedAt: str
 
 
