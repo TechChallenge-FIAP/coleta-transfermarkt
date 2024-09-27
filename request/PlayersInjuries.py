@@ -21,8 +21,9 @@ class PlayersInjuries:
         )
         players_lst: List[str] = list()
         for club in club_players:
-            for player in club.get("players"):
-                players_lst.append(player.get("id"))
+            if club.get("players") is not None:
+                for player in club.get("players"):
+                    players_lst.append(player.get("id"))
 
         players_lst = list(set(players_lst))
         self.payload["id"]["id"] = players_lst
