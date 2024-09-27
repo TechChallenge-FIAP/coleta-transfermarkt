@@ -1,6 +1,8 @@
 import logging
 
+from etl.curated.competitions_clubs.job import CuratedCompetitionsClubsJob
 from etl.raw.clubs_profile.job import ClubsProfileJob
+from etl.raw.competitions_clubs.job import RawCompetitionsClubsJob
 from request.ClubsPlayers import ClubsPlayers
 from request.ClubsProfile import ClubsProfile
 from request.CompetitionClubs import CompetitionClubs
@@ -42,6 +44,8 @@ def request():
 
 def etl():
     ClubsProfileJob().main()
+    RawCompetitionsClubsJob().main()
+    CuratedCompetitionsClubsJob().main()
 
 
 if __name__ == "__main__":
