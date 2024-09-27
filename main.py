@@ -1,5 +1,6 @@
 import logging
 
+from etl.raw.clubs_players.job import ClubsPlayersJob
 from etl.raw.clubs_profile.job import ClubsProfileJob
 from request.ClubsPlayers import ClubsPlayers
 from request.ClubsProfile import ClubsProfile
@@ -42,6 +43,7 @@ def request():
 
 def etl():
     ClubsProfileJob().main()
+    ClubsPlayersJob().main()
 
 
 if __name__ == "__main__":
