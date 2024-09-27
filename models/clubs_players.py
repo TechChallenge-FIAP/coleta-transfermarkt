@@ -24,8 +24,8 @@ class PlayerInfo(BaseModel):
 
 class ClubsPlayers(BaseModel):
     id: str
-    seasonID: Optional[str]
-    players: List[PlayerInfo]
+    seasonID: Optional[str] = None
+    players: Optional[List[PlayerInfo]] = None
     updatedAt: str
 
 

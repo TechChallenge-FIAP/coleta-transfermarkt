@@ -16,7 +16,8 @@ class ClubsPlayers:
 
     def get_club_ids(self) -> None:
         competition_clubs = read_json(
-            "./amostra/landing/CompetitionClubs/CompetitionClubs.json"
+            bucket_name="tech-challenge-3-landing-zone",
+            path="CompetitionClubs/CompetitionClubs.json",
         )
         clubs_lst: List[str] = list()
         for comp in competition_clubs:

@@ -7,6 +7,8 @@ from typing import Dict, List, Optional
 import boto3
 import requests
 from pydantic import BaseModel
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 from tqdm import tqdm
 
 from models import SoccerInfo, identify_class
@@ -59,10 +61,20 @@ class RequestSoccer:
     id: Dict[str, str]
     season: Optional[List[str]] = None
     endpoint: Dict[str, Optional[str]] = field(default_factory=dict)
-    page_number: Optional[int] = None
+    start_page: Optional[int] = None
 
-    def request_parallel(self, endpoint: str) -> Dict:
-        response = requests.get(f"https://transfermarkt-api.fly.dev/{endpoint}")
+    def request_data(self, endpoint: str) -> Dict:
+        retry_strategy = Retry(
+            total=3,
+            status_forcelist=[429, 500, 502, 503, 504],
+            backoff_factor=2,
+        )
+        adapter = HTTPAdapter(max_retries=retry_strategy)
+        http = requests.Session()
+        http.mount("https://", adapter)
+        http.mount("http://", adapter)
+
+        response = http.get(f"https://transfermarkt-api.fly.dev/{endpoint}")
 
         if response.status_code != 200:
             response.raise_for_status()
@@ -70,46 +82,24 @@ class RequestSoccer:
         table = json.loads(response.text)
         return table
 
-    def request_multhread(self, model: SoccerInfo) -> List[BaseModel]:
+    def request_multhread(self, endpoints: List[str]) -> List[dict]:
         with concurrent.futures.ThreadPoolExecutor(max_workers=6) as executor:
-            if isinstance(self.season, list):
-                endpoints = [
-                    model.endpoint.format(
-                        id=id,
-                        season=self.endpoint["season"],
-                    )
-                    for id in self.id["id"]
-                ]
-            elif isinstance(self.page_number, int):
-                endpoints = [
-                    model.endpoint.format(
-                        id=id,
-                        page_number=self.page_number,
-                    )
-                    for id in self.id["id"]
-                ]
-            else:
-                endpoints = [model.endpoint.format(id=id) for id in self.id["id"]]
             list_of_response = []
             future_to_url = {
-                executor.submit(self.request_parallel, endpoint): endpoint
+                executor.submit(self.request_data, endpoint): endpoint
                 for endpoint in endpoints
             }
             for future in tqdm(concurrent.futures.as_completed(future_to_url)):
                 data = future.result()
                 list_of_response.append(data)
             executor.shutdown(wait=False)
-        return [model.schema(**table) for table in list_of_response]
+        return list_of_response
 
     def save_s3(self, bucket: str, table: dict):
         json_resp = [model.model_dump(mode="json") for model in table]
         s3 = boto3.resource("s3")
         s3.Bucket(bucket).put_object(
-            Key=(
-                f"{self.id['identifier']}/"
-                "{self.page_number if isinstance(self.page_number, int) else ''}"
-                "_{self.id['identifier']}.json"
-            ),
+            Key=(f"{self.id['identifier']}/{self.id['identifier']}.json"),
             Body=json.dumps(json_resp, ensure_ascii=False),
         )
 
@@ -128,27 +118,46 @@ class RequestSoccer:
 
     def run_with_loop(self, model: SoccerInfo) -> None:
         list_of_tables = []
-        for season in self.season or []:
-            self.endpoint["season"] = season
-            table = self.request_multhread(model)
-            list_of_tables.extend(table)
+        endpoints = []
+
+        if isinstance(self.season, list):
+            for season in self.season or []:
+                endpoints += [
+                    model.endpoint.format(
+                        id=id,
+                        season=season,
+                    )
+                    for id in self.id["id"]
+                ]
+
+        else:
+            for id in self.id["id"]:
+                response = self.request_multhread(
+                    [model.endpoint.format(id=id, page_number=self.start_page)]
+                )
+                last_page_number = response[0].get("lastPageNumber", None)
+                for i in range(self.start_page, last_page_number + 1):
+                    endpoints += model.endpoint.format(
+                        id=id,
+                        page_number=i,
+                    )
+
+        response_list = self.request_multhread(endpoints)
+        list_of_tables += [model.schema(**table) for table in response_list]
 
         self.save_s3(bucket="tech-challenge-3-landing-zone", table=list_of_tables)
 
-    def run_withoutloop(self, model: SoccerInfo) -> int:
-        table = self.request_multhread(model)
-        last_page: int = table.get("lastPageNumber", None)
-
+    def run_withoutloop(self, model: SoccerInfo) -> None:
+        endpoints = [model.endpoint.format(id=id) for id in self.id["id"]]
+        response_list = self.request_multhread(endpoints)
+        table = [model.schema(**table) for table in response_list]
         self.save_s3(bucket="tech-challenge-3-landing-zone", table=table)
-        if last_page:
-            return last_page
-        else:
-            return -1
 
     def run(self) -> str | int:
         model = identify_class(self.id)
-        if isinstance(self.season, list):
+        if isinstance(self.season, list) or isinstance(self.start_page, int):
             self.run_with_loop(model)
             return "Loaded with loop"
 
-        return self.run_withoutloop(model)
+        self.run_withoutloop(model)
+        return "Loaded without loop"
