@@ -1,6 +1,9 @@
 import logging
 
+from etl.curated.competitions_clubs.clubs_players.job import CuratedClubsPlayersJob
 from etl.curated.competitions_clubs.job import CuratedCompetitionsClubsJob
+from etl.raw.clubs_players.job import RawClubsPlayersJob
+from etl.raw.clubs_players.job import RawClubsPlayersJob
 from etl.raw.clubs_profile.job import ClubsProfileJob
 from etl.raw.competitions_clubs.job import RawCompetitionsClubsJob
 from request.ClubsPlayers import ClubsPlayers
@@ -13,7 +16,7 @@ from request.PlayersTransfers import PlayersTransfers
 
 
 def lambda_handler(event=None, context=None):
-    request()
+    #request()
     etl()
 
 
@@ -43,9 +46,11 @@ def request():
 
 
 def etl():
-    ClubsProfileJob().main()
-    RawCompetitionsClubsJob().main()
-    CuratedCompetitionsClubsJob().main()
+    #ClubsProfileJob().main()
+    #RawCompetitionsClubsJob().main()
+    RawClubsPlayersJob().main()
+    #CuratedCompetitionsClubsJob().main()
+    #CuratedClubsPlayersJob().main()
 
 
 if __name__ == "__main__":
