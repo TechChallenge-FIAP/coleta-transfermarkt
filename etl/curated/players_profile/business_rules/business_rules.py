@@ -1,6 +1,4 @@
 from dataclasses import dataclass
-from itertools import chain
-from typing import Dict
 
 import pyspark.sql.functions as F
 from pyspark.sql import DataFrame
@@ -10,46 +8,6 @@ from etl.utils.utils import DefaultUtils
 
 @dataclass
 class BusinessRules(DefaultUtils):
-    def fix_date(self, df: DataFrame, col_name: str) -> DataFrame:
-        MONTHS: Dict[str, int] = {
-            "Jan": "01",
-            "Feb": "02",
-            "Mar": "03",
-            "Apr": "04",
-            "May": "05",
-            "Jun": "06",
-            "Jul": "07",
-            "Aug": "08",
-            "Sep": "09",
-            "Oct": "10",
-            "Nov": "11",
-            "Dec": "12",
-        }
-
-        mapping_expr = F.create_map([F.lit(x) for x in chain(*MONTHS.items())])
-
-        df_date = (
-            df.withColumn(f"aux_{col_name}", F.split(col_name, " "))
-            .withColumn(
-                col_name,
-                F.to_date(
-                    F.concat(
-                        F.col(f"aux_{col_name}")[2],
-                        mapping_expr[F.col(f"aux_{col_name}")[0]],
-                        F.lpad(
-                            F.regexp_replace(F.col(f"aux_{col_name}")[1], ",", ""),
-                            2,
-                            "0",
-                        ),
-                    ),
-                    "yyyyMMdd",
-                ),
-            )
-            .drop(f"aux_{col_name}")
-        )
-
-        return df_date
-
     def final_schema(self, df: DataFrame) -> DataFrame:
         return df.select(
             F.col("id").alias("player_id"),
