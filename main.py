@@ -1,11 +1,20 @@
 import logging
 
+from etl.curated.competitions_clubs.job import CuratedCompetitionsClubsJob
+from etl.curated.players_injuries.job import CuratedPlayersInjuries
+from etl.curated.players_profile.job import CuratedPlayersProfileJob
+from etl.curated.players_stats.job import CuratedPlayersStats
 from etl.raw.clubs_profile.job import ClubsProfileJob
+from etl.raw.competitions_clubs.job import RawCompetitionsClubsJob
+from etl.raw.players_injuries.job import RawPlayersInjuries
+from etl.raw.players_profile.job import RawPlayersProfileJob
+from etl.raw.players_stats.job import RawPlayersStats
 from request.ClubsPlayers import ClubsPlayers
 from request.ClubsProfile import ClubsProfile
 from request.CompetitionClubs import CompetitionClubs
 from request.PlayersInjuries import PlayersInjuries
 from request.PlayersMarketValue import PlayersMarketValue
+from request.PlayersProfile import PlayersProfile
 from request.PlayersStats import PlayersStats
 from request.PlayersTransfers import PlayersTransfers
 
@@ -33,6 +42,9 @@ def request():
     logging.info("Players Transfers")
     PlayersTransfers().run()
 
+    logging.info("Players Profile")
+    PlayersProfile().run()
+
     logging.info("Players Stats")
     PlayersStats().run()
 
@@ -42,6 +54,14 @@ def request():
 
 def etl():
     ClubsProfileJob().main()
+    RawCompetitionsClubsJob().main()
+    CuratedCompetitionsClubsJob().main()
+    RawPlayersProfileJob().main()
+    CuratedPlayersProfileJob().main()
+    RawPlayersInjuries().main()
+    RawPlayersStats().main()
+    CuratedPlayersInjuries().main()
+    CuratedPlayersStats().main()
 
 
 if __name__ == "__main__":

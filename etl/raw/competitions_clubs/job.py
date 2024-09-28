@@ -1,17 +1,16 @@
 from dataclasses import dataclass
 
-from etl.raw.competitions_clubs.business_rules.business_rules import BusinessRules
+from etl.utils.utils import DefaultUtils
 
 
 @dataclass
-class CompetitionsClubsJob(BusinessRules):
+class RawCompetitionsClubsJob(DefaultUtils):
     def main(self):
-        df_competitions_clubs = self.read_raw("amostra/landing/CompetitionClubs/")
-
-        df_exploded = (
-            df_competitions_clubs.transform(self.explode_out_rows)
-            .transform(self.final_schema)
-            .dropDuplicates()
+        df_competitions_clubs = self.read_json(
+            "tech-challenge-3-landing-zone/CompetitionClubs/"
         )
 
-        self.write_csv(df_exploded.repartition(1), "amostra/raw/CompetitionClubs/")
+        self.write_parquet(
+            df_competitions_clubs.repartition(1),
+            "tech-challenge-3-raw/CompetitionClubs/",
+        )
