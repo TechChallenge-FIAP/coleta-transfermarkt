@@ -6,10 +6,8 @@ from pyspark.sql import DataFrame
 from etl.utils.utils import DefaultUtils
 
 
-
 @dataclass
-class BusinessRulesPlayers(DefaultUtils):
-
+class BusinessRules(DefaultUtils):
     def explode_out_rows(self, df: DataFrame) -> DataFrame:
         df_exploded = df.withColumn("ROWS", F.explode_outer("players"))
         return df_exploded
@@ -18,7 +16,6 @@ class BusinessRulesPlayers(DefaultUtils):
 
         return df.select(
             F.col("id").alias("club_id"),
-            F.col("name").alias("club_name"),
             F.col("ROWS.id").alias("player_id"),
             F.col("ROWS.name").alias("player_name"),
             F.col("ROWS.position").alias("player_position"),
@@ -32,5 +29,5 @@ class BusinessRulesPlayers(DefaultUtils):
             F.col("ROWS.signedFrom").alias("player_signed_from"),
             F.col("ROWS.contract").alias("player_contract"),
             F.col("ROWS.marketValue").alias("player_market_value"),
-            F.col("ROWS.status").alias("player_status")
+            F.col("ROWS.status").alias("player_status"),
         )

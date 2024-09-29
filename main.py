@@ -1,5 +1,6 @@
 import logging
 
+from etl.curated.clubs_players.job import CuratedClubsPlayersJob
 from etl.curated.clubs_profile.job import CuratedClubsProfileJob
 from etl.curated.competitions_clubs.job import CuratedCompetitionsClubsJob
 from etl.curated.players_injuries.job import CuratedPlayersInjuries
@@ -7,6 +8,7 @@ from etl.curated.players_market_value.job import CuratedPlayersMarketValueJob
 from etl.curated.players_profile.job import CuratedPlayersProfileJob
 from etl.curated.players_stats.job import CuratedPlayersStats
 from etl.curated.players_transfers.job import CuratedPlayersTransfersJob
+from etl.raw.clubs_players.job import RawClubsPlayersJob
 from etl.raw.clubs_profile.job import RawClubsProfileJob
 from etl.raw.competitions_clubs.job import RawCompetitionsClubsJob
 from etl.raw.players_injuries.job import RawPlayersInjuries
@@ -76,42 +78,26 @@ def etl():
     logger.info("Players Profile")
     RawPlayersProfileJob().main()
     CuratedPlayersProfileJob().main()
+
+    logger.info("Players Injuries")
+    RawPlayersInjuries().main()
+    CuratedPlayersInjuries().main()
+
+    logger.info("Players Stats")
+    RawPlayersStats().main()
+    CuratedPlayersStats().main()
+
+    logger.info("Players Market Value")
+    RawPlayersMarketValueJob().main()
+    CuratedPlayersMarketValueJob().main()
+
+    logger.info("Players Transfers")
+    RawPlayersTransfersJob().main()
+    CuratedPlayersTransfersJob().main()
+
+    logger.info("Clubs Players")
     RawClubsPlayersJob().main()
     CuratedClubsPlayersJob().main()
-
-    logger.info("Players Injuries")
-    RawPlayersInjuries().main()
-    CuratedPlayersInjuries().main()
-
-    logger.info("Players Stats")
-    RawPlayersStats().main()
-    CuratedPlayersStats().main()
-
-    logger.info("Players Market Value")
-    RawPlayersMarketValueJob().main()
-    CuratedPlayersMarketValueJob().main()
-
-    logger.info("Players Transfers")
-    RawPlayersTransfersJob().main()
-    CuratedPlayersTransfersJob().main()
-
-    logger.info("---------------- ETL END ----------------")
-
-    logger.info("Players Injuries")
-    RawPlayersInjuries().main()
-    CuratedPlayersInjuries().main()
-
-    logger.info("Players Stats")
-    RawPlayersStats().main()
-    CuratedPlayersStats().main()
-
-    logger.info("Players Market Value")
-    RawPlayersMarketValueJob().main()
-    CuratedPlayersMarketValueJob().main()
-
-    logger.info("Players Transfers")
-    RawPlayersTransfersJob().main()
-    CuratedPlayersTransfersJob().main()
 
     logger.info("---------------- ETL END ----------------")
 
