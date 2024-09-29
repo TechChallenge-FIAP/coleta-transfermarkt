@@ -1,17 +1,16 @@
 from dataclasses import dataclass
 
-from etl.raw.players_market_value.business_rules.business_rules import BusinessRules
+from etl.utils.utils import DefaultUtils
 
 
 @dataclass
-class PlayersMarketValueJob(BusinessRules):
+class RawPlayersMarketValueJob(DefaultUtils):
     def main(self):
-        df_players_market_value = self.read_raw("amostra/landing/PlayersMarketValue/")
-
-        df_exploded = (
-            df_players_market_value.transform(self.explode_out_rows)
-            .transform(self.final_schema)
-            .dropDuplicates()
+        df_players_market_value = self.read_json(
+            "tech-challenge-3-landing-zone/PlayersMarketValue/"
         )
 
-        self.write_csv(df_exploded.repartition(1), "amostra/raw/PlayersMarketValue/")
+        self.write_parquet(
+            df_players_market_value.repartition(1),
+            "tech-challenge-3-raw/PlayersMarketValue/",
+        )
