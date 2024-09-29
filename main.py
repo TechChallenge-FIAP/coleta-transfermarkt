@@ -23,61 +23,77 @@ from request.PlayersProfile import PlayersProfile
 from request.PlayersStats import PlayersStats
 from request.PlayersTransfers import PlayersTransfers
 
+logger = logging.getLogger(__name__)
+
 
 def lambda_handler(event=None, context=None):
+    logging.basicConfig(level=logging.INFO)
     request()
     etl()
 
 
 def request():
-    logging.info("Requesting data")
+    logger.info("---------------- Requesting data ----------------")
 
-    logging.info("Competition Clubs")
+    logger.info("Competition Clubs")
     CompetitionClubs().run()
 
-    logging.info("Clubs Profile")
+    logger.info("Clubs Profile")
     ClubsProfile().run()
 
-    logging.info("Clubs Players")
+    logger.info("Clubs Players")
     ClubsPlayers().run()
 
-    logging.info("Players Market Value")
+    logger.info("Players Market Value")
     PlayersMarketValue().run()
 
-    logging.info("Players Transfers")
+    logger.info("Players Transfers")
     PlayersTransfers().run()
 
-    logging.info("Players Profile")
+    logger.info("Players Profile")
     PlayersProfile().run()
 
-    logging.info("Players Stats")
+    logger.info("Players Stats")
     PlayersStats().run()
 
-    logging.info("Players Injuries")
+    logger.info("Players Injuries")
     PlayersInjuries().run()
+
+    logger.info("---------------- End requesting data ----------------")
 
 
 def etl():
+    logger.info("---------------- ETL ----------------")
+
+    logger.info("Clubs Profile")
     RawClubsProfileJob().main()
     CuratedClubsProfileJob().main()
 
+    logger.info("Competition Clubs")
     RawCompetitionsClubsJob().main()
     CuratedCompetitionsClubsJob().main()
 
+    logger.info("Players Profile")
     RawPlayersProfileJob().main()
     CuratedPlayersProfileJob().main()
 
+    logger.info("Players Injuries")
     RawPlayersInjuries().main()
     CuratedPlayersInjuries().main()
 
+    logger.info("Players Stats")
     RawPlayersStats().main()
     CuratedPlayersStats().main()
 
+    logger.info("Players Market Value")
     RawPlayersMarketValueJob().main()
     CuratedPlayersMarketValueJob().main()
 
+    logger.info("Players Transfers")
     RawPlayersTransfersJob().main()
     CuratedPlayersTransfersJob().main()
+
+    logger.info("---------------- ETL END ----------------")
 
 
 if __name__ == "__main__":
