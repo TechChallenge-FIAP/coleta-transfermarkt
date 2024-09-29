@@ -2,13 +2,17 @@ import logging
 
 from etl.curated.competitions_clubs.job import CuratedCompetitionsClubsJob
 from etl.curated.players_injuries.job import CuratedPlayersInjuries
+from etl.curated.players_market_value.job import CuratedPlayersMarketValueJob
 from etl.curated.players_profile.job import CuratedPlayersProfileJob
 from etl.curated.players_stats.job import CuratedPlayersStats
+from etl.curated.players_transfers.job import CuratedPlayersTransfersJob
 from etl.raw.clubs_profile.job import ClubsProfileJob
 from etl.raw.competitions_clubs.job import RawCompetitionsClubsJob
 from etl.raw.players_injuries.job import RawPlayersInjuries
+from etl.raw.players_market_value.job import RawPlayersMarketValueJob
 from etl.raw.players_profile.job import RawPlayersProfileJob
 from etl.raw.players_stats.job import RawPlayersStats
+from etl.raw.players_transfers.job import RawPlayersTransfersJob
 from request.ClubsPlayers import ClubsPlayers
 from request.ClubsProfile import ClubsProfile
 from request.CompetitionClubs import CompetitionClubs
@@ -62,6 +66,10 @@ def etl():
     RawPlayersStats().main()
     CuratedPlayersInjuries().main()
     CuratedPlayersStats().main()
+    RawPlayersMarketValueJob().main()
+    RawPlayersTransfersJob().main()
+    CuratedPlayersMarketValueJob().main()
+    CuratedPlayersTransfersJob().main()
 
 
 if __name__ == "__main__":
