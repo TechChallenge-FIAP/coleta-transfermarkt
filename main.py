@@ -1,12 +1,13 @@
 import logging
 
+from etl.curated.clubs_profile.job import CuratedClubsProfileJob
 from etl.curated.competitions_clubs.job import CuratedCompetitionsClubsJob
 from etl.curated.players_injuries.job import CuratedPlayersInjuries
 from etl.curated.players_market_value.job import CuratedPlayersMarketValueJob
 from etl.curated.players_profile.job import CuratedPlayersProfileJob
 from etl.curated.players_stats.job import CuratedPlayersStats
 from etl.curated.players_transfers.job import CuratedPlayersTransfersJob
-from etl.raw.clubs_profile.job import ClubsProfileJob
+from etl.raw.clubs_profile.job import RawClubsProfileJob
 from etl.raw.competitions_clubs.job import RawCompetitionsClubsJob
 from etl.raw.players_injuries.job import RawPlayersInjuries
 from etl.raw.players_market_value.job import RawPlayersMarketValueJob
@@ -57,18 +58,25 @@ def request():
 
 
 def etl():
-    ClubsProfileJob().main()
+    RawClubsProfileJob().main()
+    CuratedClubsProfileJob().main()
+
     RawCompetitionsClubsJob().main()
     CuratedCompetitionsClubsJob().main()
+
     RawPlayersProfileJob().main()
     CuratedPlayersProfileJob().main()
+
     RawPlayersInjuries().main()
-    RawPlayersStats().main()
     CuratedPlayersInjuries().main()
+
+    RawPlayersStats().main()
     CuratedPlayersStats().main()
+
     RawPlayersMarketValueJob().main()
-    RawPlayersTransfersJob().main()
     CuratedPlayersMarketValueJob().main()
+
+    RawPlayersTransfersJob().main()
     CuratedPlayersTransfersJob().main()
 
 

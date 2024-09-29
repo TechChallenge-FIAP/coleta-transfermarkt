@@ -4,8 +4,11 @@ from etl.utils.utils import DefaultUtils
 
 
 @dataclass
-class ClubsProfileJob(DefaultUtils):
+class RawClubsProfileJob(DefaultUtils):
     def main(self):
-        df_clubs_profile = self.read_raw("amostra/landing/ClubsProfile/")
+        df_clubs_profile = self.read_json("tech-challenge-3-landing-zone/ClubsProfile/")
 
-        self.write_csv(df_clubs_profile.repartition(1), "amostra/raw/ClubsProfile/")
+        self.write_parquet(
+            df_clubs_profile.repartition(1),
+            "tech-challenge-3-raw/ClubsProfile/",
+        )
