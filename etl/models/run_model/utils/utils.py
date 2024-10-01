@@ -4,7 +4,7 @@ from typing import List
 import joblib
 import pandas as pd
 from pyspark.sql import DataFrame
-from pyspark.sql.functions import array, col, lit, pandas_udf
+from pyspark.sql.functions import array, array_max, col, expr, lit, pandas_udf
 from pyspark.sql.types import ArrayType, FloatType
 
 from etl.utils.utils import DefaultUtils
@@ -38,13 +38,19 @@ class Utils(DefaultUtils):
 
         model = self.read_pickle(path)
 
-        @pandas_udf(FloatType())
-        def udf_predict(samples: pd.Series) -> pd.Series:
-            return pd.Series([model.predict(sample)[0][0] for sample in samples])
+        @pandas_udf(ArrayType(FloatType()))
+        def udf_predict_classifier(samples: pd.Series) -> pd.Series:
+            return pd.Series(model.predict_proba([sample])[0] for sample in samples)
 
         df = df.withColumn("prediction_name", lit(f"{model.__class__.__name__}"))
 
         for attribute, value in model.__dict__.items():
-            df = df.withColumn(f"prediction_{attribute}", lit(value))
+            df = df.withColumn(f"prediction_{attribute}", lit(f"{value}"))
 
-        return df.withColumn("predict", udf_predict(col("features_preproccessing")))
+        return (
+            df.withColumn(
+                "predict", udf_predict_classifier(col("features_preproccessing"))
+            )
+            .withColumn("predict_prob", array_max(col("predict")))
+            .withColumn("predict_class", expr("array_position(predict, predict_prob)"))
+        )

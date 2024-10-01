@@ -27,6 +27,8 @@ class RunModel(Utils):
             "train/pkl/scaler.pkl",
         )
 
-        df_processing.select(
-            "player_id", "preprocessing_name", "features_preproccessing"
+        df_predict = self.predict(df_processing, "train/pkl/random_forest.pkl")
+
+        df_predict.select(
+            "player_id", "predict", "predict_prob", "predict_class"
         ).show()
