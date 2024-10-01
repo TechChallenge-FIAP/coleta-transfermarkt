@@ -29,6 +29,9 @@ class RunModel(Utils):
 
         df_predict = self.predict(df_processing, "train/pkl/random_forest.pkl")
 
-        df_predict.select(
-            "player_id", "predict", "predict_prob", "predict_class"
-        ).show()
+        df_predict = df_predict.select("player_id", F.col("predict").getItem(0))
+
+        self.write_parquet(
+            df_predict.repartition(1),
+            "tech-challenge-3-models/predictions/soccer-model/",
+        )
