@@ -31,8 +31,8 @@ logger = logging.getLogger(__name__)
 
 def lambda_handler(event=None, context=None):
     logging.basicConfig(level=logging.INFO)
-    # request()
-    # etl()
+    request()
+    etl()
     models()
 
 
