@@ -15,6 +15,7 @@ class RunModel(Utils):
 
         df_variables = df_variables.filter(F.col("target") == F.lit("0")).drop(
             "target",
+            "age",
             "days_unknown_injury",
             "days_corona_virus",
             "gamesmissed_unknown_injury",

@@ -21,7 +21,7 @@ class CompetitionClubs:
                 "PO1",
             ],
         },
-        "season": ["2023", "2022", "2021"],
+        "season": ["2024"],
     }
 
     def run(self):
