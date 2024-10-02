@@ -8,6 +8,7 @@ from etl.curated.players_market_value.job import CuratedPlayersMarketValueJob
 from etl.curated.players_profile.job import CuratedPlayersProfileJob
 from etl.curated.players_stats.job import CuratedPlayersStats
 from etl.curated.players_transfers.job import CuratedPlayersTransfersJob
+from etl.models.run_model.job import RunModel
 from etl.raw.clubs_players.job import RawClubsPlayersJob
 from etl.raw.clubs_profile.job import RawClubsProfileJob
 from etl.raw.competitions_clubs.job import RawCompetitionsClubsJob
@@ -32,6 +33,7 @@ def lambda_handler(event=None, context=None):
     logging.basicConfig(level=logging.INFO)
     request()
     etl()
+    models()
 
 
 def request():
@@ -100,6 +102,10 @@ def etl():
     CuratedClubsPlayersJob().main()
 
     logger.info("---------------- ETL END ----------------")
+
+
+def models():
+    RunModel().run()
 
 
 if __name__ == "__main__":

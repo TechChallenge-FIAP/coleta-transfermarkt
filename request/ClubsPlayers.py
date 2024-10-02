@@ -11,7 +11,7 @@ class ClubsPlayers:
         "id": {
             "identifier": "ClubsPlayers",
         },
-        "season": ["2023", "2022", "2021"],
+        "season": ["2024", "2023", "2022", "2021"],
     }
 
     def get_club_ids(self) -> None:
