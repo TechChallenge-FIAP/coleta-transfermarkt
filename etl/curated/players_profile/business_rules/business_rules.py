@@ -12,6 +12,7 @@ class BusinessRules(DefaultUtils):
         return df.select(
             F.col("id").alias("player_id"),
             F.col("url").alias("url_source"),
+            F.col("imageURL").alias("url_image"),
             F.col("name").alias("player_name"),
             F.col("description").alias("player_resume"),
             F.col("fullName").alias("player_fullname"),

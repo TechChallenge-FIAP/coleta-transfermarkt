@@ -12,6 +12,7 @@ class BusinessRules(DefaultUtils):
         return df.select(
             F.col("id").alias("club_id"),
             F.col("name").alias("club_name"),
+            F.col("image").alias("url_image"),
             F.col("league.countryId").alias("country_id"),
             F.col("league.countryName").alias("country_name"),
             F.col("league.tier").alias("club_tier"),
